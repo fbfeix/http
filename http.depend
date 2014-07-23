@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1405929514 source:c:\users\fastner\documents\github\http\httpclient.cpp
+	"HTTPClient.h"
+	<iostream>
+
+1405929488 c:\users\fastner\documents\github\http\httpclient.h
+	<boost/lexical_cast.hpp>
+	<boost/asio.hpp>
+	<boost/log/trivial.hpp>
+	<boost/bind.hpp>
+
+1385320472 source:c:\users\fastner\documents\github\http\main.cpp
+
+1405929400 source:c:\users\fastner\documents\github\http\testhttpclient.cpp
+	"HttpClient.h"
+	<boost/asio.hpp>
+	<boost/bind.hpp>
+	<iostream>
+
