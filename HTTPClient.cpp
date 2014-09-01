@@ -4,6 +4,7 @@ HTTPClient::HTTPClient(boost::asio::io_service& service,
 					const std::string& remoteHost, unsigned int port)
 : io_service_()
 , socket_(io_service_)
+, remote_host_(remoteHost)
 {
 /*
 	boost::asio::socket_base::debug option(true);
@@ -17,7 +18,7 @@ HTTPClient::HTTPClient(boost::asio::io_service& service,
 
 	boost::asio::connect(socket_, r.resolve(q), ec);
 
-	BOOST_LOG_TRIVIAL(debug) << "open connection";
+	BOOST_LOG_TRIVIAL(debug) << "open connection to " << remote_host_;
 
 	if(ec)
 	{
@@ -47,7 +48,7 @@ void HTTPClient::closeConnection()
 		socket_.close();
 		boost::system::error_code ec;
 
-		BOOST_LOG_TRIVIAL(debug) << "closing connection";
+		BOOST_LOG_TRIVIAL(debug) << "closing connection to " << remote_host_;
 
 		if(ec)
 			BOOST_LOG_TRIVIAL(error) << ec.message();
@@ -61,7 +62,7 @@ void HTTPClient::sendRequest(const std::string& data)
 {
 	if(socket_.is_open())
 	{
-		BOOST_LOG_TRIVIAL(debug) << "send request";
+		BOOST_LOG_TRIVIAL(debug) << "send request to " << remote_host_;
 
 		boost::asio::async_write(socket_,
 				boost::asio::buffer(data, data.size()),
@@ -75,7 +76,7 @@ void HTTPClient::sendRequest(const std::string& data)
 
 void HTTPClient::writeHandler(const boost::system::error_code& ec)
 {
-	BOOST_LOG_TRIVIAL(debug) << "handling write request";
+	BOOST_LOG_TRIVIAL(debug) << "handling write request from " << remote_host_;
 
 	if(!ec)
 	{
@@ -100,7 +101,7 @@ void HTTPClient::writeHandler(const boost::system::error_code& ec)
 
 void HTTPClient::readStatusLineHandler(const boost::system::error_code& ec)
 {
-	BOOST_LOG_TRIVIAL(debug) << "handling read status line";
+	BOOST_LOG_TRIVIAL(debug) << "handling read status line from " << remote_host_;
 
 	if(!ec)
 	{
@@ -118,7 +119,7 @@ void HTTPClient::readStatusLineHandler(const boost::system::error_code& ec)
 		std::getline(response_stream, status_message);
 		if(!response_stream || http_version.substr(0, 5) != "HTTP/")
 		{
-			BOOST_LOG_TRIVIAL(error) << "Invalid http response";
+			BOOST_LOG_TRIVIAL(error) << "Invalid http response from " << remote_host_;
 			return;
 		}
 		if(status_code != 200)
@@ -144,7 +145,7 @@ void HTTPClient::readStatusLineHandler(const boost::system::error_code& ec)
 
 void HTTPClient::readHeadersHandler(const boost::system::error_code& ec)
 {
-	BOOST_LOG_TRIVIAL(debug) << "handling read status line";
+	BOOST_LOG_TRIVIAL(debug) << "handling read status line from " << remote_host_;
 
 	if(!ec)
 	{
@@ -180,7 +181,7 @@ void HTTPClient::readHeadersHandler(const boost::system::error_code& ec)
 
 void HTTPClient::readContentHandler(const boost::system::error_code& ec)
 {
-	BOOST_LOG_TRIVIAL(debug) << "handling read content";
+	BOOST_LOG_TRIVIAL(debug) << "handling read content from " << remote_host_;
 
 	if(!ec)
 	{
@@ -207,6 +208,6 @@ void HTTPClient::readContentHandler(const boost::system::error_code& ec)
 
 boost::asio::streambuf& HTTPClient::getBuffer()
 {
-	BOOST_LOG_TRIVIAL(trace) << "returned buffer";
+	BOOST_LOG_TRIVIAL(trace) << "returned buffer from " << remote_host_;
 	return response_;
 }

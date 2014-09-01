@@ -31,6 +31,8 @@ class HTTPClient
 
 	protected:
 	private:
+		std::string remote_host_;
+
 		boost::asio::io_service io_service_;
 		boost::asio::ip::tcp::socket socket_;
 
